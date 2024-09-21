@@ -10,6 +10,6 @@ from app.services.enums import Status
 class Order(Base):
     """Модель Заказа"""
     create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
-    status: Mapped[Status] = mapped_column(Enum(Status), default=Status.IN_PROCESS)
+    status: Mapped[Status] = mapped_column(Enum(), default=Status.IN_PROCESS)
 
     order_item: Mapped[List['OrderItem']] = relationship(back_populates='order')

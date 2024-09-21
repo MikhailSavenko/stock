@@ -2,8 +2,6 @@ from app.core.db import Base
 from sqlalchemy import ForeignKey, Integer
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.models.product import Product
-from app.models.order import Order
 
 
 class OrderItem(Base):
@@ -13,4 +11,4 @@ class OrderItem(Base):
     count_products: Mapped[int] = mapped_column(Integer, default=1)
 
     order: Mapped['Order'] = relationship(back_populates='order_item')
-    product = Mapped['Product'] = relationship(back_populates='product')
+    product: Mapped['Product'] = relationship(back_populates='product')
