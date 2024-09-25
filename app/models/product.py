@@ -2,6 +2,7 @@ from typing import List
 from sqlalchemy import String, Text, Numeric, Integer
 from app.core.db import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.models.order_item import OrderItem
 
 
 class Product(Base):

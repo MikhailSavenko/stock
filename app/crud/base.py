@@ -37,10 +37,7 @@ class CRUDBase:
 
     async def update(self, db_obj, obj_in, session: AsyncSession):
         """
-        Обновляем объект. 
-
-        exclude_unset=True позволяет обрабатывать PATCH
-        
+        Обновляем объект.
         """
         obj_data = jsonable_encoder(db_obj)
         update_data = obj_in.dict(exclude_unset=True)
