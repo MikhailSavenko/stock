@@ -11,4 +11,4 @@ class OrderItem(Base):
     item_quantity: Mapped[int] = mapped_column(Integer, default=1)
 
     order: Mapped['Order'] = relationship(back_populates='order_item')
-    product: Mapped['Product'] = relationship(back_populates='product')
+    product: Mapped['Product'] = relationship(back_populates='order_item')

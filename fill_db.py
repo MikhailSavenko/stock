@@ -1,15 +1,12 @@
 import asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
-from core.db import get_async_session
-from models import Product
+from app.core.db import AsyncSessionLocal
+from app.models import Product
 
 
 async def seed_database(db: AsyncSession):
-    """Наполняем БД дефолтными значениями"""
-    # Чистим базу
-    print('туту')
+    """Наполняем БД значениями"""
     await db.execute(Product.__table__.delete())
-    
     product_data = [
         {
             "name": "Product A",
@@ -35,13 +32,13 @@ async def seed_database(db: AsyncSession):
         new_product = Product(**product)
         db.add(new_product)
     
-    await db.commit()  # Не забывайте использовать await
+    await db.commit()  
 
 
 async def main():
-    async with get_async_session() as session:  # Получаем асинхронную сессию
-        await seed_database(session)  # Передаём сессию в функцию
-
+    async with AsyncSessionLocal() as session:
+        await seed_database(session) 
+        
 
 if __name__ == '__main__':
-    asyncio.run(main())  # Запускаем асинхронный main
+    asyncio.run(main()) 
