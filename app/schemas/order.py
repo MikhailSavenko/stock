@@ -1,21 +1,22 @@
 from typing import List
-from pydantic import BaseModel, Field
-from app.schemas.order_item import OrderItemDB
+from pydantic import BaseModel
+from app.schemas.order_item import OrderItemCreate, OrderItemDB
 from app.services.enums import Status
 from datetime import datetime
 
 
 class OrderBase(BaseModel):
-    status: Status = Status.in_process
+    pass
 
 
 class OrderCreate(OrderBase):
-    order_item: List[int]
+    order_item: List[OrderItemCreate]
 
 
 class OrderDB(OrderBase):
     id: int
     order_item: List[OrderItemDB]
+    status: Status = Status.in_process
     create_at: datetime
 
     class Config:
@@ -23,4 +24,4 @@ class OrderDB(OrderBase):
 
 
 class OrderUpdate(OrderBase):
-    pass
+    status: Status = Status.in_process

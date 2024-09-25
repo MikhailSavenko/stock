@@ -3,7 +3,6 @@ from sqlalchemy import DateTime, Enum
 from app.core.db import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime, timezone
-from app.models.order_item import OrderItem
 from app.services.enums import Status
 
 
