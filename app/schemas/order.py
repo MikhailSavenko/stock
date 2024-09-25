@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 class OrderBase(BaseModel):
-    status: Status = Field(default=Status.IN_PROCESS)
+    status: Status = Status.in_process
 
 
 class OrderCreate(OrderBase):
@@ -19,7 +19,7 @@ class OrderDB(OrderBase):
     create_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class OrderUpdate(OrderBase):

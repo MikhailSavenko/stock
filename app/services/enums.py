@@ -1,8 +1,8 @@
-from sqlalchemy import Enum
+from enum import Enum
 
 
-class Status(Enum):
+class Status(str, Enum):
     """Статусы заказа"""
-    IN_PROCESS = 'in_process'
-    DISPATCHED = 'dispatched'
-    DELIVERED = 'delivered'
+    in_process = 'in_process'
+    dispatched = 'dispatched'
+    delivered = 'delivered'
