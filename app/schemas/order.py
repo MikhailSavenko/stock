@@ -29,4 +29,4 @@ class OrderUpdate(OrderBase):
 
 class OrderUpdateDB(OrderBase):
     id: int
-    status: Status 
+    status: Status

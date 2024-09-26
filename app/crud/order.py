@@ -7,7 +7,6 @@ class CRUDOrder(CRUDBase):
     async def create(self, session: AsyncSession):
         """Создает новый заказ"""
         db_obj = self.model()
-        print(db_obj)
         session.add(db_obj)
         await session.commit()
         await session.refresh(db_obj)

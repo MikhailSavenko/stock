@@ -22,7 +22,10 @@ async def get_product_or_404(product_id: int, session: AsyncSession):
 
 
 async def check_quantity_product(obj_create_order: OrderCreate, session: AsyncSession):
-    """Проверяем достаточное количество товара на складе для заказа"""
+    """
+    Проверяем достаточное количество товара на складе для заказа
+       return:  \Товар, Необходимое количество/ в заказе
+    """
     obj_in_data = obj_create_order.model_dump()
     data_order = obj_in_data.get('order_item')[0]
     required_quantity = data_order.get('item_quantity')
@@ -30,4 +33,4 @@ async def check_quantity_product(obj_create_order: OrderCreate, session: AsyncSe
     product = await get_product_or_404(product_id=product_id, session=session)  
     if required_quantity > product.quantity:
         raise Conflict(detail=f'Заказ не может быть обработан: на складе недостаточно товара. Возможное количество для заказа: {product.quantity}.')
-    return data_order
+    return product, required_quantity

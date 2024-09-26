@@ -2,8 +2,11 @@ from fastapi import APIRouter, Depends
 from app.api.validators import check_quantity_product, get_order_or_404
 from app.core.db import AsyncSession, get_async_session
 from app.crud.order import order_crud
+from app.crud.product import product_crud
 from app.crud.order_item import order_item_crud
 from app.schemas.order import OrderCreate, OrderDB, OrderUpdate, OrderUpdateDB
+import logging
+
 
 router = APIRouter()
 
@@ -25,13 +28,15 @@ async def create_new_order(order_item: OrderCreate, session: AsyncSession = Depe
     Создание заказа:
     - Проверяем количество товара
     - Создаем Order
-    - Затем создаем OrderItem 
+    - Cоздаем OrderItem
+    - Обновляем количество товара
     - Получаем и отдаем обновленный Order
     """
-    await check_quantity_product(obj_create_order=order_item, session=session)
+    product, quantity = await check_quantity_product(obj_create_order=order_item, session=session)
     order = await order_crud.create(session=session)
     order_id = order.id
     await order_item_crud.create(obj_in=order_item, order_id=order_id, session=session)
+    await product_crud.update_quantity(obj_db=product, session=session, quantity=quantity)
     order = await order_crud.get(obj_id=order_id, session=session)
     return order
 
