@@ -24,6 +24,7 @@ class ProductUpdate(ProductBase):
 
 
 class ProductDB(ProductBase):
+    id: int
     pass
 
     class Config:

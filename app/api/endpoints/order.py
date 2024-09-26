@@ -23,9 +23,9 @@ async def get_order_by_id(order_id: int, session: AsyncSession = Depends(get_asy
 async def create_new_order(order_item: OrderCreate, session: AsyncSession = Depends(get_async_session)):
     """
     Создание заказа:
-    Создаем Order
-    Затем создаем OrderItem 
-    Получаем и отдаем  обновленный Order
+    - Создаем Order
+    - Затем создаем OrderItem 
+    - Получаем и отдаем обновленный Order
     """
     order = await order_crud.create(session=session)
     order_id = order.id
