@@ -22,12 +22,14 @@ async def get_order_by_id(order_id: int, session: AsyncSession = Depends(get_asy
 
 @router.post('/', response_model=OrderDB)
 async def create_new_order(order_item: OrderCreate, session: AsyncSession = Depends(get_async_session)):
+    """
+    Создание заказа:
+    Создаем Order
+    Затем создаем OrderItem 
+    Получаем и отдаем  обновленный Order
+    """
     order = await order_crud.create(session=session)
-    print(order.id)
     order_id = order.id
     await order_item_crud.create(obj_in=order_item, order_id=order_id, session=session)
-    print(f'ffffffffffffffffffffffffffff {order_id}')
-    order = await session.execute(select(Order).where(Order.id == order_id).options(selectinload(Order.order_item)))
-    order = order.scalars().first()
-    print(order.__dict__)
+    order = await order_crud.get(obj_id=order_id, session=session)
     return order

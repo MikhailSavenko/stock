@@ -10,7 +10,6 @@ class CRUDBase:
     
     async def get(self, obj_id: int, session: AsyncSession):
         """Вернем объект по id"""
-        print(f'obj_IDDDDDDDDDDDD {obj_id}')
         db_obj = await session.execute(
             select(self.model).where(self.model.id == obj_id)
         )
@@ -19,7 +18,7 @@ class CRUDBase:
     async def get_multi(self, session: AsyncSession):
         """Список объектов"""
         db_objs = await session.execute(select(self.model))
-        return db_objs.scalars().first()
+        return db_objs.scalars().all()
     
     async def create(self, obj_in, session: AsyncSession):
         """Создает новый объект"""

@@ -11,4 +11,4 @@ class Order(Base):
     create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
     status: Mapped[Status] = mapped_column(Enum(Status), default=Status.in_process)
 
-    order_item: Mapped[List['OrderItem']] = relationship(back_populates='order')
+    order_item: Mapped[List['OrderItem']] = relationship(back_populates='order', lazy='selectin')
