@@ -12,7 +12,7 @@ def configure_logging():
     log_dir = BASE_DIR / 'logs'
     log_dir.mkdir(exist_ok=True)
 
-    log_file = log_dir / 'yacut.log'
+    log_file = log_dir / 'stock.log'
 
     rotating_heandler = RotatingFileHandler(
         log_file, maxBytes=10**6, backupCount=5, encoding='utf-8'

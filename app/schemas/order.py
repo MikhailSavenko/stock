@@ -25,3 +25,8 @@ class OrderDB(OrderBase):
 
 class OrderUpdate(OrderBase):
     status: Status = Status.in_process
+
+
+class OrderUpdateDB(OrderBase):
+    id: int
+    status: Status 
