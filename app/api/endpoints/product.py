@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from app.api.validators import get_product_or_404
 from app.core.db import AsyncSession, get_async_session
 from app.crud.product import product_crud
-from app.schemas.product import ProductCreate, ProductDB
+from app.schemas.product import ProductCreate, ProductDB, ProductUpdate
 
 router = APIRouter()
 
@@ -24,3 +24,8 @@ async def create_new_product(product_item: ProductCreate, session: AsyncSession 
     return product
 
 
+@router.put('/{product_id}', response_model=ProductDB)
+async def update_product(product_id: int, obj_in: ProductUpdate, session: AsyncSession = Depends(get_async_session)):
+    product_obj_db = await get_product_or_404(product_id=product_id, session=session)
+    product_update = await product_crud.update(obj_in=obj_in, db_obj=product_obj_db, session=session)
+    return product_update
