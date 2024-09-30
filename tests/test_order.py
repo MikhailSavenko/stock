@@ -1,12 +1,11 @@
 import pytest
 
-from app.api.exeptions import Conflict, NotFound
+from app.api.exeptions import NotFound
 
 
 @pytest.mark.anyio
 async def test_get_all_orders(async_client):
     """Тест: Получение Списка объектов при GET /orders"""
-    print(async_client)
     response = await async_client.get('/orders/')
     assert response.status_code == 200
     assert isinstance(response.json(), list)
@@ -18,7 +17,7 @@ async def test_get_one_order(async_client, test_order):
     response = await async_client.get(f'/orders/{test_order.id}')
     assert response.status_code == 200
     assert response.json()['id'] == test_order.id
-    assert response.json()['status']
+    assert response.json()['status'] == 'in_process'
     assert isinstance(response.json()['order_item'], list)
 
 
@@ -83,8 +82,15 @@ async def test_quantity_conflict(async_client, test_product):
             }
         ]  
     }
+    
     response = await async_client.post('/orders/', json=order_data)
-    assert pytest.raises(Conflict)
     assert response.status_code == 409
     
-    
+
+@pytest.mark.anyio
+async def test_status_update(async_client, test_order):
+    status_new = {
+        "status": "dispatched",
+    }
+    response = await async_client.patch(f'/orders/{test_order.id}/status', json=status_new)
+    assert response.json()['status'] == 'dispatched'

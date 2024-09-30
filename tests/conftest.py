@@ -39,7 +39,6 @@ async def test_product(async_session):
 
 
 
-
 # @pytest.fixture
 # async def test_order_item(test_order, test_product, async_session):
 #     obj_in = OrderItemCreate(item_quantity=1, product_id=test_product.id)
