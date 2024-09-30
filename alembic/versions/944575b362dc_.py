@@ -5,12 +5,12 @@ Revises: 1570cf5744da
 Create Date: 2024-09-25 20:00:49.527721
 
 """
+
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
 
-
+from alembic import op
 
 revision: str = '944575b362dc'
 down_revision: Union[str, None] = '1570cf5744da'

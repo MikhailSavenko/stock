@@ -1,6 +1,8 @@
-from .base import CRUDBase
-from app.models import Order
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models import Order
+
+from .base import CRUDBase
 
 
 class CRUDOrder(CRUDBase):
@@ -12,5 +14,5 @@ class CRUDOrder(CRUDBase):
         await session.refresh(db_obj)
         return db_obj
 
-    
+
 order_crud = CRUDOrder(Order)

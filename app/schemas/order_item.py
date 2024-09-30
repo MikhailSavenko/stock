@@ -9,7 +9,7 @@ class OrderItemBase(BaseModel):
 
 class OrderItemCreate(OrderItemBase):
     product_id: int
-    
+
 
 class OrderItemDB(OrderItemBase):
     id: int

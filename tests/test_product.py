@@ -28,7 +28,7 @@ async def test_create_products(async_client):
         "name": "Product test",
         "description": "test",
         "cost": 1000,
-        "quantity": 2
+        "quantity": 2,
     }
     response = await async_client.post(f'/products/', json=data)
     if response.status_code == 200:
@@ -46,15 +46,18 @@ async def test_update_product(async_client, test_product):
         "name": "update",
         "description": "update",
         "cost": 1000,
-        "quantity": 10
+        "quantity": 10,
     }
-    response = await async_client.put(f'/products/{test_product.id}', json=data_in)
+    response = await async_client.put(
+        f'/products/{test_product.id}', json=data_in
+    )
     if response.status_code == 200:
         response_data = response.json()
         assert response_data['name'] == data_in['name']
         assert response_data['description'] == data_in['description']
         assert response_data['cost'] == data_in['cost']
         assert response_data['quantity'] == data_in['quantity']
+
 
 @pytest.mark.anyio
 async def test_del_product(async_client, test_product):

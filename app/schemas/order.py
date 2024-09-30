@@ -1,8 +1,10 @@
+from datetime import datetime
 from typing import List
+
 from pydantic import BaseModel
+
 from app.schemas.order_item import OrderItemCreate, OrderItemDB
 from app.services.enums import Status
-from datetime import datetime
 
 
 class OrderBase(BaseModel):

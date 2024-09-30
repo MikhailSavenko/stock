@@ -21,7 +21,6 @@ async def test_get_one_order(async_client, test_order):
     assert isinstance(response.json()['order_item'], list)
 
 
-
 @pytest.mark.anyio
 async def test_get_404_order_id(async_client):
     """Тест: 404 ошибка при GET к несуществующему orders/id"""
@@ -34,63 +33,56 @@ async def test_get_404_order_id(async_client):
 async def test_post_order(async_client, test_product):
     """Тест: Создане заказа"""
     order_data = {
-        'order_item': [
-            {
-                "product_id": test_product.id,
-                "item_quantity": 1
-            }
-        ]  
+        'order_item': [{"product_id": test_product.id, "item_quantity": 1}]
     }
     response = await async_client.post('/orders/', json=order_data)
     data = response.json()
-    order_item = data.get('order_item') 
+    order_item = data.get('order_item')
     assert response.status_code == 200
     assert isinstance(order_item, list)
     assert len(order_item) == 1
     assert data.get('status') == 'in_process'
     assert order_item[0].get('product')['name'] == test_product.name
-    assert order_item[0].get('product')['description'] == test_product.description
-    assert float(order_item[0].get('product')['cost']) == float(test_product.cost)
+    assert (
+        order_item[0].get('product')['description'] == test_product.description
+    )
+    assert float(order_item[0].get('product')['cost']) == float(
+        test_product.cost
+    )
 
 
 @pytest.mark.anyio
 async def test_quantity(async_client, test_product):
     """Тест: Уменьшение количества товара при создании заказа"""
     order_data = {
-        'order_item': [
-            {
-                "product_id": test_product.id,
-                "item_quantity": 1
-            }
-        ]  
+        'order_item': [{"product_id": test_product.id, "item_quantity": 1}]
     }
     response = await async_client.post('/orders/', json=order_data)
     data = response.json()
-    order_item = data.get('order_item') 
+    order_item = data.get('order_item')
     assert response.status_code == 200
-    assert order_item[0].get('product')['quantity'] == test_product.quantity - 1
+    assert (
+        order_item[0].get('product')['quantity'] == test_product.quantity - 1
+    )
 
 
 @pytest.mark.anyio
 async def test_quantity_conflict(async_client, test_product):
     """Тест: Недостаточно товара"""
     order_data = {
-        'order_item': [
-            {
-                "product_id": test_product.id,
-                "item_quantity": 10
-            }
-        ]  
+        'order_item': [{"product_id": test_product.id, "item_quantity": 10}]
     }
-    
+
     response = await async_client.post('/orders/', json=order_data)
     assert response.status_code == 409
-    
+
 
 @pytest.mark.anyio
 async def test_status_update(async_client, test_order):
     status_new = {
         "status": "dispatched",
     }
-    response = await async_client.patch(f'/orders/{test_order.id}/status', json=status_new)
+    response = await async_client.patch(
+        f'/orders/{test_order.id}/status', json=status_new
+    )
     assert response.json()['status'] == 'dispatched'
