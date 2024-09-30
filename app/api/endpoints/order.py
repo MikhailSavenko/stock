@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from app.api.exeptions import NotFound
+from app.api.exeptions import Conflict, NotFound
 from app.api.validators import check_quantity_product, get_order_or_404
 from app.core.db import AsyncSession, get_async_session
 from app.crud.order import order_crud
@@ -42,8 +42,11 @@ async def create_new_order(order_create: OrderCreate, session: AsyncSession = De
             await product_crud.update_quantity(obj_db=product, session=session, quantity=quantity)
         order = await order_crud.get(obj_id=order_id, session=session)
         return order
+    except Conflict as e:
+        await order_crud.remove(db_obj=order, session=session)
+        raise e
     except NotFound as e:
-        await order_crud.remove(order)
+        await order_crud.remove(db_obj=order, session=session)
         raise e
 
 
