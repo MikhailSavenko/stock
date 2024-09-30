@@ -15,15 +15,29 @@ router = APIRouter()
 
 @router.get('/', response_model=list[OrderDB])
 async def get_all_orders(session: AsyncSession = Depends(get_async_session)):
-    return await order_crud.get_multi(session=session)
+    try:
+        return await order_crud.get_multi(session=session)
+    except Exception as e:
+        logging.exception(
+            'Ошибка при получении списка заказова', stack_info=True
+        )
+        raise e
 
 
 @router.get('/{order_id}', response_model=OrderDB)
 async def get_order_by_id(
     order_id: int, session: AsyncSession = Depends(get_async_session)
 ):
-    await get_order_or_404(order_id=order_id, session=session)
-    return await order_crud.get(obj_id=order_id, session=session)
+    try:
+        await get_order_or_404(order_id=order_id, session=session)
+        return await order_crud.get(obj_id=order_id, session=session)
+    except NotFound as e:
+        raise e
+    except Exception as e:
+        logging.exception(
+            'Ошибка при получении одного заказа', stack_info=True
+        )
+        raise e
 
 
 @router.post('/', response_model=OrderDB)
@@ -60,6 +74,9 @@ async def create_new_order(
     except NotFound as e:
         await order_crud.remove(db_obj=order, session=session)
         raise e
+    except Exception as e:
+        logging.exception('Ошибка при cоздании заказа', stack_info=True)
+        raise e
 
 
 @router.patch('/{order_id}/status', response_model=OrderUpdateDB)
@@ -68,8 +85,16 @@ async def update_status_order(
     obj_in: OrderUpdate,
     session: AsyncSession = Depends(get_async_session),
 ):
-    order_obj_db = await get_order_or_404(order_id=order_id, session=session)
-    order_update = await order_crud.update(
-        obj_in=obj_in, db_obj=order_obj_db, session=session
-    )
-    return order_update
+    try:
+        order_obj_db = await get_order_or_404(
+            order_id=order_id, session=session
+        )
+        order_update = await order_crud.update(
+            obj_in=obj_in, db_obj=order_obj_db, session=session
+        )
+        return order_update
+    except NotFound as e:
+        raise e
+    except Exception as e:
+        logging.exception('Ошибка при обновлении заказа', stack_info=True)
+        raise e
