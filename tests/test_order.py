@@ -38,6 +38,7 @@ async def test_post_order(async_client, test_product):
     response = await async_client.post('/orders/', json=order_data)
     data = response.json()
     order_item = data.get('order_item')
+    print(data)
     assert response.status_code == 200
     assert isinstance(order_item, list)
     assert len(order_item) == 1

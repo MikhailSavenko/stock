@@ -56,6 +56,7 @@ async def create_new_order(
     try:
         order = await order_crud.create(session=session)
         order_id = order.id
+        print(f'ddddddddcdscdcsdcsdcsdcccdcsdcsdcsdcsdcsdcscscc {order_create}')
         for order_item in order_create.order_item:
             product, quantity = await check_quantity_product(
                 obj_create_order=order_item, session=session
@@ -67,6 +68,7 @@ async def create_new_order(
                 obj_db=product, session=session, quantity=quantity
             )
         order = await order_crud.get(obj_id=order_id, session=session)
+        print(f'ddddddddddddddddddddddddddddd {order}')
         return order
     except Conflict as e:
         await order_crud.remove(db_obj=order, session=session)
