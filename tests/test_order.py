@@ -57,12 +57,17 @@ async def test_quantity(async_client, test_product, async_session):
     test_product_q = test_product.quantity
     item_quantity = 3
     order_data = {
-        'order_item': [{"product_id": test_product.id, "item_quantity": item_quantity}]
+        'order_item': [
+            {"product_id": test_product.id, "item_quantity": item_quantity}
+        ]
     }
     response = await async_client.post('/orders/', json=order_data)
     data = response.json()
-    assert response.status_code == 200 
-    assert data.get('order_item')[0]['product'].get('quantity') == test_product_q - item_quantity
+    assert response.status_code == 200
+    assert (
+        data.get('order_item')[0]['product'].get('quantity')
+        == test_product_q - item_quantity
+    )
 
 
 @pytest.mark.anyio

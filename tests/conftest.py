@@ -1,16 +1,16 @@
 import asyncio
+from pathlib import Path
+
 import pytest
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
 
+from app.core.db import Base, get_async_session
 from app.crud.order import order_crud
 from app.crud.product import product_crud
 from app.main import app
 from app.schemas.product import ProductCreate
-
-from app.core.db import Base, get_async_session
-from pathlib import Path
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -18,8 +18,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 TEST_DB = BASE_DIR / 'test.db'
 SQLALCHEMY_DATABASE_URL = f'sqlite+aiosqlite:///{str(TEST_DB)}'
 engine = create_async_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={'check_same_thread': False}
+    SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False}
 )
 TestingSessionLocal = sessionmaker(
     class_=AsyncSession,
@@ -32,6 +31,7 @@ TestingSessionLocal = sessionmaker(
 async def override_get_async_session():
     async with TestingSessionLocal() as async_session:
         yield async_session
+
 
 app.dependency_overrides[get_async_session] = override_get_async_session
 
@@ -53,7 +53,9 @@ async def async_session():
 
 @pytest.fixture(scope='session')
 async def async_client():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url='http://test') as client:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url='http://test'
+    ) as client:
         yield client
 
 
@@ -62,6 +64,7 @@ async def event_loop(request):
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
+
 
 @pytest.fixture
 def anyio_backend():
