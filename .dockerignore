@@ -6,3 +6,9 @@ venv
 .venv
 fastapi.db
 /tests
+docker-compose.yml
+Dockerfile
+pytest.ini
+README.md
+setup.cfg
+env.txt
