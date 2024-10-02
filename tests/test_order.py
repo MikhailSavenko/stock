@@ -1,10 +1,7 @@
 import pytest
-from sqlalchemy import select
 
 from app.api.exeptions import NotFound
-from sqlalchemy.orm import selectinload
 
-from app.models import Product, Order
 
 @pytest.mark.anyio
 async def test_get_all_orders(async_client):
@@ -32,17 +29,6 @@ async def test_get_404_order_id(async_client):
     assert response.status_code == 404
 
 
-async def get_order_with_items(order_id, session):
-    query = select(Order).options(selectinload(Order.order_item)).where(Order.id == order_id)
-    result = await session.execute(query)
-    return result.scalars().first()
-
-
-async def get_product(obj_id, session):
-    query = select(Product).where(Product.id == obj_id)
-    result = await session.execute(query)
-    return result.scalars().first()
-
 @pytest.mark.anyio
 async def test_post_order(async_client, test_product, async_session):
     """Тест: Создане заказа"""
@@ -50,18 +36,17 @@ async def test_post_order(async_client, test_product, async_session):
         'order_item': [{"product_id": test_product.id, "item_quantity": 1}]
     }
     response = await async_client.post('/orders/', json=order_data)
-    order_id = response.json()['id']
-    data =  await get_order_with_items(order_id, async_session)
-    order_item = data.order_item
+    data = response.json()
+    order_item = data.get('order_item')
     assert response.status_code == 200
     assert isinstance(order_item, list)
     assert len(order_item) == 1
-    assert data.status == 'in_process'
-    assert order_item[0].product.name == test_product.name
+    assert data.get('status') == 'in_process'
+    assert order_item[0]['product'].get('name') == test_product.name
     assert (
-        order_item[0].product.description == test_product.description
+        order_item[0]['product'].get('description') == test_product.description
     )
-    assert float(order_item[0].product.cost) == float(
+    assert float(order_item[0]['product'].get('cost')) == float(
         test_product.cost
     )
 
