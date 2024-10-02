@@ -85,6 +85,4 @@ async def test_product(async_session):
     product_test = await product_crud.create(
         obj_in=obj_in, session=async_session
     )
-    print(f'Product TEST В фикстуре создания {product_test}')
-    print(f'Product ID TEST В фикстуре создания {product_test.id}')
     yield product_test

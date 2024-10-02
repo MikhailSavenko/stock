@@ -52,7 +52,6 @@ async def test_post_order(async_client, test_product, async_session):
     response = await async_client.post('/orders/', json=order_data)
     order_id = response.json()['id']
     data =  await get_order_with_items(order_id, async_session)
-    print(data)
     order_item = data.order_item
     assert response.status_code == 200
     assert isinstance(order_item, list)
@@ -76,7 +75,6 @@ async def test_quantity(async_client, test_product, async_session):
         'order_item': [{"product_id": test_product.id, "item_quantity": item_quantity}]
     }
     response = await async_client.post('/orders/', json=order_data)
-    print(response.json())
     data = response.json()
     assert response.status_code == 200 
     assert data.get('order_item')[0]['product'].get('quantity') == test_product_q - item_quantity
