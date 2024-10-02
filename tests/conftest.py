@@ -18,12 +18,14 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 TEST_DB = BASE_DIR / 'test.db'
 SQLALCHEMY_DATABASE_URL = f'sqlite+aiosqlite:///{str(TEST_DB)}'
 engine = create_async_engine(
-    SQLALCHEMY_DATABASE_URL
+    SQLALCHEMY_DATABASE_URL,
+    connect_args={'check_same_thread': False}
 )
 TestingSessionLocal = sessionmaker(
-    engine,
     class_=AsyncSession,
-    expire_on_commit=False
+    autocommit=False,
+    autoflush=False,
+    bind=engine,
 )
 
 
@@ -70,7 +72,6 @@ def anyio_backend():
 async def test_order(async_session):
     order_test = await order_crud.create(session=async_session)
     yield order_test
-    await order_crud.remove(order_test, session=async_session)
 
 
 @pytest.fixture
@@ -84,4 +85,6 @@ async def test_product(async_session):
     product_test = await product_crud.create(
         obj_in=obj_in, session=async_session
     )
+    print(f'Product TEST В фикстуре создания {product_test}')
+    print(f'Product ID TEST В фикстуре создания {product_test.id}')
     yield product_test
