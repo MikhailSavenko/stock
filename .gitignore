@@ -168,3 +168,5 @@ fastapi.db
 .test.db
 /test.db
 test.db
+
+.idea/
