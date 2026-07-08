@@ -70,7 +70,8 @@ async def create_new_order(
             await product_crud.update_quantity(
                 obj_db=product, session=session, quantity=quantity
             )
-            total_price += product.cost * quantity
+            
+            total_price += float(product.cost) * quantity
 
         order = await order_crud.get(obj_id=order_id, session=session)
 
