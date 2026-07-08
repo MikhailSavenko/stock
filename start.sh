@@ -6,8 +6,10 @@ until nc -z db 5432; do
   sleep 1
 done
 
-# Применяем миграции
-echo "Применение миграций..."
+mkdir -p alembic/versions
+
+# Создание миграции
+echo "Создание миграций..."
 alembic revision --autogenerate
 
 # Применяем миграции

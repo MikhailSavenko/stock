@@ -2,7 +2,7 @@ from celery import Celery
 from app.core.config import settings
 
 celery_app = Celery(
-    "stock_analytics"
+    "stock_analytics",
     broker=settings.celery_broker_url,
     backend=settings.celery_broker_url,
     include=["app.services.analytics"]
