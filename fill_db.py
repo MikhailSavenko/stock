@@ -3,11 +3,13 @@ import asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import AsyncSessionLocal
-from app.models import Product
+from app.models import Product, OrderItem, Order
 
 
 async def seed_database(db: AsyncSession):
     """Наполняем БД значениями"""
+    await db.execute(OrderItem.__table__.delete())
+    await db.execute(Order.__table__.delete())
     await db.execute(Product.__table__.delete())
     product_data = [
         {
