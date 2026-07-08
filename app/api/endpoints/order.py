@@ -9,6 +9,7 @@ from app.crud.order import order_crud
 from app.crud.order_item import order_item_crud
 from app.crud.product import product_crud
 from app.schemas.order import OrderCreate, OrderDB, OrderUpdate, OrderUpdateDB
+from app.core.celery_app import celery_app
 
 router = APIRouter()
 
@@ -56,6 +57,9 @@ async def create_new_order(
     try:
         order = await order_crud.create(session=session)
         order_id = order.id
+
+        total_price = 0.0
+
         for order_item in order_create.order_item:
             product, quantity = await check_quantity_product(
                 obj_create_order=order_item, session=session
@@ -66,7 +70,16 @@ async def create_new_order(
             await product_crud.update_quantity(
                 obj_db=product, session=session, quantity=quantity
             )
+            total_price += product.cost * quantity
+
         order = await order_crud.get(obj_id=order_id, session=session)
+
+        # Отправляем МЕТРИКИ В Яндекс Метрики
+        celery_app.send_task(
+            "app.services.analytics.send_metrica_task",
+            args=["client_id_from_cookies", order_id, float(total_price)]
+        )
+
         return order
     except Conflict as e:
         await order_crud.remove(db_obj=order, session=session)
